@@ -4,6 +4,7 @@ Manifest.txt
 README.txt
 Rakefile
 examples/decoder.rb
+examples/encoder.rb
 examples/kexp.rb
 ext/decoder.c
 ext/decoder.h
