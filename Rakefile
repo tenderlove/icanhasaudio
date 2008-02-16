@@ -11,7 +11,6 @@ Hoe.new('icanhasaudio', '0.1.0') do |p|
   p.summary         = "icanhasaudio is a lame/vorbis wrapper for decoding ur mp3s and ur oggs."
   p.description     = p.paragraphs_of('README.txt', 3..6).join("\n\n")
   p.url             = p.paragraphs_of('README.txt', 1).first.strip
-  p.changes         = p.paragraphs_of('History.txt', 0..2).join("\n\n")
   p.spec_extras     = { :extensions => ['ext/extconf.rb'] }
   p.clean_globs     = ["ext/Makefile", "ext/*.{o,so,bundle,log}"]
 end

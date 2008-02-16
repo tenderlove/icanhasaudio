@@ -1,17 +1,17 @@
-== 0.1.0
+=== 0.1.0
 
 * 1 major enhancement
   * Added MPEG Encoder
 
-== 0.0.3
+=== 0.0.3
 * 1 minor enhancement
   * Fixed extconf to be a little more smart.
 
-== 0.0.2
+=== 0.0.2
 * 1 major enhancement
   * I can has ogg decoder!
 
-== 0.0.1 / 2007-07-10
+=== 0.0.1 / 2007-07-10
 
 * 1 major enhancement
   * I can has birfday!
