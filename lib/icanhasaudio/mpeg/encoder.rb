@@ -98,7 +98,8 @@ module Audio
         when IFF_ID_FORM # AIFF file
           parse_aiff_header(file)
         else
-          raise "Unsupported format"
+          $stderr.puts "Assuming RAW PCM"
+          file.rewind
         end
       end
 
@@ -157,7 +158,7 @@ module Audio
             sub_size -= 4
 
             sample_type = IFF_ID_SSND
-            file.read(sub_size)
+            file.read(block_offset)
             is_aiff = true
             break
           else
@@ -179,7 +180,7 @@ module Audio
 
         @pcmbitwidth = sample_size
         self.num_channels = num_channels
-        self.in_samplerate = sample_rate
+        self.in_samplerate = sample_rate.to_i
         self.num_samples = num_sample_frames
       end
 

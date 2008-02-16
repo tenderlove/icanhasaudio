@@ -5,7 +5,8 @@
 == DESCRIPTION.  LULZ
 
 Hai! icanhasaudio? is an interface to lame for decoding ur MP3s.  I iz in ur
-computer. Decodin ur mp3s.  Whatevs!  I also decodin ur OGGz!
+computer. Decodin ur mp3s.  Whatevs!  I also decodin ur OGGz!  I kin also
+encodin' ur WAV and AIFF to mp3z!
 
 == SYNOPSYS ROFLOL
 
@@ -23,14 +24,26 @@ Or even smaller:
   reader = Audio::OGG::Decoder.new
   reader.decode(File.open(ARGV[0], 'rb'), File.open(ARGV[1], 'wb'))
 
+Encoder!!!!!! LOL
+
+  writer = Audio::MPEG::Encoder.new
+  File.open(ARGV[0]), 'rb') { |wav_lol|
+    File.open(ARGV[1]), 'wb+') { |mp3_lol|
+      writer.encode(wav_lol, mp3_lol)
+    }
+  }
+
 == PROBLEMS
 
-Currently only decodes MP3/OGG data.  Plus many other problems....  YMMV. LOL.
+Currently only decodes MP3/OGG data.  Also encodes WAV/AIFF to mp3. Plus many
+other problems....  YMMV. LOL.
 Not laugh plz!
 
 == DEPENDENSEEZ
 
 Make sure lame is installed on ur 'puter.  Also ogg and vorbisfile!
+
+  # port install libvorbis vorbis-tools lame
 
 == CREDITZ
 

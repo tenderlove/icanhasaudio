@@ -25,6 +25,116 @@ encoder_allocate(VALUE klass) {
 
 /*
  * call-seq:
+ *    encoder.vbr_hard_min=
+ *
+ * Strictly enforce the vbr min bitrate.  Normally it will be violated for
+ * analog silence.
+ */
+static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  lame_set_VBR_hard_min(gfp, boolean == Qtrue ? 1 : 0);
+  return boolean;
+}
+
+/*
+ * call-seq:
+ *    encoder.vbr_hard_min?
+ *
+ *  Get the hard minimum flag. 
+ */
+static VALUE MpegEncoder_get_vbr_hard_min(VALUE self) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return lame_get_VBR_hard_min(gfp) == 0 ? Qfalse : Qtrue;
+}
+
+/*
+ * call-seq:
+ *    encoder.vbr_max_bitrate=
+ *
+ * Set the maximum vbr bitrate.
+ */
+static VALUE MpegEncoder_set_vbr_max_bitrate(VALUE self, VALUE brate) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  lame_set_VBR_max_bitrate_kbps(gfp, NUM2INT(brate));
+  return brate;
+}
+
+/*
+ * call-seq:
+ *    encoder.vbr_max_bitrate
+ *
+ * Get the maximum vbr bitrate.
+ */
+static VALUE MpegEncoder_get_vbr_max_bitrate(VALUE self) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return INT2NUM(lame_get_VBR_max_bitrate_kbps(gfp));
+}
+
+/*
+ * call-seq:
+ *    encoder.vbr_min_bitrate=
+ *
+ * Set the minimum vbr bitrate.
+ */
+static VALUE MpegEncoder_set_vbr_min_bitrate(VALUE self, VALUE brate) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  lame_set_VBR_min_bitrate_kbps(gfp, NUM2INT(brate));
+  return brate;
+}
+
+/*
+ * call-seq:
+ *    encoder.vbr_min_bitrate
+ *
+ * Get the minimum vbr bitrate.
+ */
+static VALUE MpegEncoder_get_vbr_min_bitrate(VALUE self) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return INT2NUM(lame_get_VBR_min_bitrate_kbps(gfp));
+}
+
+/*
+ * call-seq:
+ *    encoder.bitrate=
+ *
+ * Set the bitrate.
+ */
+static VALUE MpegEncoder_set_bitrate(VALUE self, VALUE brate) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  lame_set_brate(gfp, NUM2INT(brate));
+  lame_set_VBR_min_bitrate_kbps(gfp, lame_get_brate(gfp));
+  return brate;
+}
+
+/*
+ * call-seq:
+ *    encoder.bitrate
+ *
+ * Get the bitrate.
+ */
+static VALUE MpegEncoder_get_bitrate(VALUE self) {
+  lame_global_flags * gfp;
+
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return INT2NUM(lame_get_brate(gfp));
+}
+
+/*
+ * call-seq:
  *    encoder.quality=
  *
  * Set the VBR quality. 0 = highest, 9 = lowest
@@ -368,10 +478,14 @@ void init_MpegEncoder(VALUE rb_mMpeg) {
   rb_mAudio = rb_define_module("Audio");
   rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
   */
+  /*
+   * Encode mp3s
+   */
   cMpegEncoder = rb_define_class_under(rb_mMpeg, "Encoder", rb_cObject);
   rb_define_alloc_func(cMpegEncoder, encoder_allocate);
 
   /* Public Methods */
+
   rb_define_method(cMpegEncoder, "vbr_quality=",MpegEncoder_set_vbr_quality, 1);
   rb_define_method(cMpegEncoder, "vbr_quality", MpegEncoder_get_vbr_quality, 0);
   rb_define_method(cMpegEncoder, "vbr_type=", MpegEncoder_set_vbr_type, 1);
@@ -383,6 +497,15 @@ void init_MpegEncoder(VALUE rb_mMpeg) {
   rb_define_method(cMpegEncoder, "year=", MpegEncoder_set_year, 1);
   rb_define_method(cMpegEncoder, "track=", MpegEncoder_set_track, 1);
   rb_define_method(cMpegEncoder, "genre=", MpegEncoder_set_genre, 1);
+  rb_define_method(cMpegEncoder, "bitrate=", MpegEncoder_set_bitrate, 1);
+  rb_define_method(cMpegEncoder, "bitrate", MpegEncoder_get_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_min_bitrate=", MpegEncoder_set_vbr_min_bitrate, 1);
+  rb_define_method(cMpegEncoder, "vbr_min_bitrate", MpegEncoder_get_vbr_min_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_max_bitrate=", MpegEncoder_set_vbr_max_bitrate, 1);
+  rb_define_method(cMpegEncoder, "vbr_max_bitrate", MpegEncoder_get_vbr_max_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_hard_min=", MpegEncoder_set_vbr_hard_min, 1);
+  rb_define_method(cMpegEncoder, "vbr_hard_min?", MpegEncoder_get_vbr_hard_min, 0);
+
 
   rb_define_private_method(cMpegEncoder, "init_params", MpegEncoder_init_params, 0);
   rb_define_private_method(cMpegEncoder, "num_channels=", MpegEncoder_set_num_channels, 1);
