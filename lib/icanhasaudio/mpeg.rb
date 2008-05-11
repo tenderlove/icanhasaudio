@@ -10,5 +10,15 @@ class Audio::MPEG::Decoder
     @bits = 16
     yield self if block_given?
   end
+
+  private
+  def attempt_rewind(outf)
+    begin
+      outf.seek(0, IO::SEEK_SET)
+      true
+    rescue
+      false
+    end
+  end
 end
 

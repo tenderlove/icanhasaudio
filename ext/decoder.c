@@ -86,13 +86,7 @@ lame_decoder(VALUE self, VALUE infile, VALUE outf, mp3data_struct * mp3data)
       wavsize *= i;
   }
 
-  if(!raw && rb_respond_to(outf, rb_intern("seek")) == Qtrue) {
-    rb_funcall( outf,
-                rb_intern("seek"),
-                2,
-                INT2NUM(0),
-                rb_const_get(rb_cIO, rb_intern("SEEK_SET")) );
-
+  if(!raw && rb_funcall(self, rb_intern("attempt_rewind"), 1, outf)) {
     rewrite_header(headbuf, (int)wavsize);
     rb_funcall(outf, rb_intern("write"), 1, rb_str_new(headbuf, 44));
   }

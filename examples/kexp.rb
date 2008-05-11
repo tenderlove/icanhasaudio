@@ -17,7 +17,7 @@ decoder = Thread.new(rd, wr) { |read, write|
 
 sleep 2
 
-raop = Net::RAOP::Client.new('192.168.1.173')
+raop = Net::RAOP::Client.new('10.0.1.1')
 raop.connect
 raop.play rd
 raop.disconnect
