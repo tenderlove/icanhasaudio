@@ -8,6 +8,7 @@ class Audio::MPEG::Decoder
 
   def initialize
     @bits = 16
+    @raw = nil
     yield self if block_given?
   end
 
