@@ -92,149 +92,162 @@ module Audio
 
       def parse_header(file)
         header = file.read(4).unpack('N').first
-        case header
-        when WAV_ID_RIFF # Wave file
-          parse_wave_header(file)
-        when IFF_ID_FORM # AIFF file
-          parse_aiff_header(file)
-        else
-          $stderr.puts "Assuming RAW PCM"
-          file.rewind
+        info =  case header
+                when WAV_ID_RIFF # Wave file
+                  info = self.class.parse_wave_header(file)
+                when IFF_ID_FORM # AIFF file
+                  info = self.class.parse_aiff_header(file)
+                else
+                  $stderr.puts "Assuming RAW PCM"
+                  file.rewind
+                  nil
+                end
+        if info
+          self.num_channels   = info[:num_channels]
+          self.in_samplerate  = info[:in_samplerate]
+          self.num_samples    = info[:num_samples]
+          self.pcmbitwidth    = info[:bit_width]
         end
       end
 
-      def parse_aiff_header(file)
-        chunk_size  = file.read(4).unpack('N').first
-        type_id     = file.read(4).unpack('N').first
+      public
+      class << self
+        def parse_aiff_header(file)
+          chunk_size  = file.read(4).unpack('N').first
+          type_id     = file.read(4).unpack('N').first
 
-        raise unless [IFF_ID_AIFF, IFF_ID_AIFC].any? { |x| type_id == x }
+          raise unless [IFF_ID_AIFF, IFF_ID_AIFC].any? { |x| type_id == x }
 
-        sub_size = 0
-        sample_type = nil
-        sample_size = nil
-        num_channels = nil
-        block_size = nil
-        sample_rate = nil
-        is_aiff = false
-        while chunk_size > 0
-          type = file.read(4).unpack('N').first
-          chunk_size -= 4
-
-          case type
-          when IFF_ID_COMM
-            sub_size = file.read(4).unpack('N').first
+          sub_size = 0
+          sample_type = nil
+          sample_size = nil
+          num_channels = nil
+          block_size = nil
+          sample_rate = nil
+          is_aiff = false
+          while chunk_size > 0
+            type = file.read(4).unpack('N').first
             chunk_size -= 4
 
-            num_channels = file.read(2).unpack('n').first
-            sub_size -= 2
-            num_sample_frames = file.read(4).unpack('N').first
-            sub_size -= 4
-            sample_size = file.read(2).unpack('n').first
-            sub_size -= 2
-            sample_rate = unpack_ieee(file.read(10))
-            sub_size -= 10
+            case type
+            when IFF_ID_COMM
+              sub_size = file.read(4).unpack('N').first
+              chunk_size -= 4
 
-            if type_id == IFF_ID_AIFC
-              data_type = file.read(4).unpack('N').first
-              sub_size -=4
+              num_channels = file.read(2).unpack('n').first
+              sub_size -= 2
+              num_sample_frames = file.read(4).unpack('N').first
+              sub_size -= 4
+              sample_size = file.read(2).unpack('n').first
+              sub_size -= 2
+              sample_rate = unpack_ieee(file.read(10))
+              sub_size -= 10
 
-              raise unless [  IFF_ID_2CLE,
-                              IFF_ID_2CBE,
-                              IFF_ID_NONE,
-              ].any? { |x| data_type == x }
+              if type_id == IFF_ID_AIFC
+                data_type = file.read(4).unpack('N').first
+                sub_size -=4
 
-              #if sample_size == 16
-              # swap bytes....
+                raise unless [  IFF_ID_2CLE,
+                                IFF_ID_2CBE,
+                                IFF_ID_NONE,
+                ].any? { |x| data_type == x }
+
+                #if sample_size == 16
+                # swap bytes....
+              end
+
+              file.read(sub_size)
+            when IFF_ID_SSND
+              sub_size = file.read(4).unpack('N').first
+              chunk_size -= sub_size
+
+              block_offset = file.read(4).unpack('N').first
+              sub_size -= 4
+              block_size = file.read(4).unpack('N').first
+              sub_size -= 4
+
+              sample_type = IFF_ID_SSND
+              file.read(block_offset)
+              is_aiff = true
+              break
+            else
+              sub_size = file.read(4).unpack('N').first
+              chunk_size -= sub_size
+              file.read(sub_size)
             end
-
-            file.read(sub_size)
-          when IFF_ID_SSND
-            sub_size = file.read(4).unpack('N').first
-            chunk_size -= sub_size
-
-            block_offset = file.read(4).unpack('N').first
-            sub_size -= 4
-            block_size = file.read(4).unpack('N').first
-            sub_size -= 4
-
-            sample_type = IFF_ID_SSND
-            file.read(block_offset)
-            is_aiff = true
-            break
-          else
-            sub_size = file.read(4).unpack('N').first
-            chunk_size -= sub_size
-            file.read(sub_size)
           end
+
+          # Validate the header
+          if is_aiff
+            raise "Sound data is not PCM" unless sample_type == IFF_ID_SSND
+            raise "Sound data is not 16 bits" unless sample_size == 16
+            unless num_channels == 1 || num_channels == 2
+              raise "Sound data is not mono or stereo" 
+            end
+            raise "Block size is not 0 bytes" unless block_size == 0
+          end
+
+          {
+            :num_channels   => num_channels,
+            :in_samplerate  => simple_rate.to_i,
+            :num_samples    => num_sample_frames,
+            :bit_width      => sample_size,
+          }
         end
 
-        # Validate the header
-        if is_aiff
-          raise "Sound data is not PCM" unless sample_type == IFF_ID_SSND
-          raise "Sound data is not 16 bits" unless sample_size == 16
-          unless num_channels == 1 || num_channels == 2
-            raise "Sound data is not mono or stereo" 
-          end
-          raise "Block size is not 0 bytes" unless block_size == 0
+        def unpack_ieee(data)
+          (expon, hi_mant, lo_mant) = data.unpack('nNN')
+          expon -= 16383
+          hi_mant * (2 ** (expon -= 31)) + lo_mant * (2 ** (expon -= 32))
         end
 
-        @pcmbitwidth = sample_size
-        self.num_channels = num_channels
-        self.in_samplerate = sample_rate.to_i
-        self.num_samples = num_sample_frames
-      end
+        def parse_wave_header(file)
+          format_tag        = nil
+          channels          = nil
+          samples_per_sec   = nil
+          avg_bytes_per_sec = nil
+          block_align       = nil
+          bits_per_sample   = nil
+          is_wav            = false
+          data_length       = 0
 
-      def unpack_ieee(data)
-        (expon, hi_mant, lo_mant) = data.unpack('nNN')
-        expon -= 16383
-        hi_mant * (2 ** (expon -= 31)) + lo_mant * (2 ** (expon -= 32))
-      end
+          file_length = file.read(4).unpack('N').first
+          raise "Corrupt wave" if file.read(4).unpack('N').first != WAV_ID_WAVE
+          20.times {
+            type = file.read(4).unpack('N').first
+            case type
+            when WAV_ID_FMT
+              sub_size = file.read(4).unpack('V').first
+              raise "Corrupt wave" if sub_size < 16
 
-      def parse_wave_header(file)
-        format_tag        = nil
-        channels          = nil
-        samples_per_sec   = nil
-        avg_bytes_per_sec = nil
-        block_align       = nil
-        bits_per_sample   = nil
-        is_wav            = false
-        data_length       = 0
+              ( format_tag,
+                channels, 
+                samples_per_sec,
+                avg_bytes_per_sec,
+                block_align, bits_per_sample) = *(file.read(16).unpack('vvVVvv'))
+              sub_size -= 16
 
-        file_length = file.read(4).unpack('N').first
-        raise "Corrupt wave" if file.read(4).unpack('N').first != WAV_ID_WAVE
-        20.times {
-          type = file.read(4).unpack('N').first
-          case type
-          when WAV_ID_FMT
-            sub_size = file.read(4).unpack('V').first
-            raise "Corrupt wave" if sub_size < 16
+              file.read(sub_size) if sub_size > 0
+            when WAV_ID_DATA
+              sub_size = file.read(4).unpack('V').first
+              data_length = sub_size
+              is_wav = true
+              break;
+            else
+              sub_size = file.read(4).unpack('V').first
+              file.read(sub_size)
+            end
+          }
+          raise "Unsupported format" unless format_tag == 1
+          raise unless is_wav
 
-            ( format_tag,
-              channels, 
-              samples_per_sec,
-              avg_bytes_per_sec,
-              block_align, bits_per_sample) = *(file.read(16).unpack('vvVVvv'))
-            sub_size -= 16
-
-            file.read(sub_size) if sub_size > 0
-          when WAV_ID_DATA
-            sub_size = file.read(4).unpack('V').first
-            data_length = sub_size
-            is_wav = true
-            break;
-          else
-            sub_size = file.read(4).unpack('V').first
-            file.read(sub_size)
-          end
-        }
-        raise "Unsupported format" unless format_tag == 1
-        raise unless is_wav
-
-        self.num_channels = channels
-        self.in_samplerate = samples_per_sec
-        self.num_samples = data_length / (channels * ((bits_per_sample+7)/8))
-        @pcmbitwidth = bits_per_sample
-        is_wav
+          {
+            :num_channels   => channels,
+            :in_samplerate  => samples_per_sec,
+            :num_samples    => data_length / (channels*((bits_per_sample+7)/8)),
+            :bit_width      => bits_per_sample,
+          }
+        end
       end
     end
   end
