@@ -244,6 +244,7 @@ module Audio
           {
             :num_channels   => channels,
             :in_samplerate  => samples_per_sec,
+            :bytes_in_seconds => data_length,
             :milliseconds   => (data_length/2)/(samples_per_sec/1000)/2,
             :num_samples    => data_length / (channels*((bits_per_sample+7)/8)),
             :bit_width      => bits_per_sample,
