@@ -296,6 +296,12 @@ static VALUE MpegEncoder_set_genre(VALUE self, VALUE genre) {
 
 /* Private methods. */
 
+/*
+ * call-seq:
+ *    encoder.write_vbr_tag
+ *
+ * Write the vbr tag
+ */
 static VALUE MpegEncoder_write_vbr_tag(VALUE self) {
   lame_global_flags * gfp;
 
@@ -305,6 +311,12 @@ static VALUE MpegEncoder_write_vbr_tag(VALUE self) {
   return Qfalse;
 }
 
+/*
+ * call-seq:
+ *    encoder.print_internals
+ *
+ * Print the lame internals.  For debugging
+ */
 static VALUE MpegEncoder_print_internals(VALUE self) {
   lame_global_flags * gfp;
 
@@ -313,6 +325,12 @@ static VALUE MpegEncoder_print_internals(VALUE self) {
   return Qnil;
 }
 
+/*
+ * call-seq:
+ *    encoder.mpeg_quality
+ *
+ * Get the mpeg quality
+ */
 static VALUE MpegEncoder_get_mpeg_quality(VALUE self) {
   lame_global_flags * gfp;
 
@@ -320,6 +338,12 @@ static VALUE MpegEncoder_get_mpeg_quality(VALUE self) {
   return INT2NUM(lame_get_quality(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.compression_ratio
+ *
+ * Get the mpeg compression ratio
+ */
 static VALUE MpegEncoder_get_compression_ratio(VALUE self) {
   lame_global_flags * gfp;
 
@@ -327,6 +351,12 @@ static VALUE MpegEncoder_get_compression_ratio(VALUE self) {
   return rb_float_new(lame_get_compression_ratio(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.mpeg_verison
+ *
+ * Get the mpeg version
+ */
 static VALUE MpegEncoder_get_mpeg_version(VALUE self) {
   lame_global_flags * gfp;
 
@@ -334,6 +364,12 @@ static VALUE MpegEncoder_get_mpeg_version(VALUE self) {
   return INT2NUM(lame_get_version(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.mpeg_mode
+ *
+ * Get the mpeg mode
+ */
 static VALUE MpegEncoder_get_mpeg_mode(VALUE self) {
   lame_global_flags * gfp;
 
@@ -341,6 +377,12 @@ static VALUE MpegEncoder_get_mpeg_mode(VALUE self) {
   return INT2NUM(lame_get_mode(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.force_ms
+ *
+ * Get the force ms flag
+ */
 static VALUE MpegEncoder_get_force_ms(VALUE self) {
   lame_global_flags * gfp;
 
@@ -348,6 +390,12 @@ static VALUE MpegEncoder_get_force_ms(VALUE self) {
   return INT2NUM(lame_get_force_ms(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.out_samplerate
+ *
+ * Get the out samplerate
+ */
 static VALUE MpegEncoder_get_out_samplerate(VALUE self) {
   lame_global_flags * gfp;
 
@@ -355,6 +403,12 @@ static VALUE MpegEncoder_get_out_samplerate(VALUE self) {
   return INT2NUM(lame_get_out_samplerate(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.in_samplerate=
+ *
+ * Set the input samplerate
+ */
 static VALUE MpegEncoder_set_in_samplerate(VALUE self, VALUE samplerate) {
   lame_global_flags * gfp;
 
@@ -363,6 +417,12 @@ static VALUE MpegEncoder_set_in_samplerate(VALUE self, VALUE samplerate) {
   return samplerate;
 }
 
+/*
+ * call-seq:
+ *    encoder.num_samples=
+ *
+ * Set the number of samples
+ */
 static VALUE MpegEncoder_set_num_samples(VALUE self, VALUE num_samples) {
   lame_global_flags * gfp;
 
@@ -371,6 +431,12 @@ static VALUE MpegEncoder_set_num_samples(VALUE self, VALUE num_samples) {
   return num_samples;
 }
 
+/*
+ * call-seq:
+ *    encoder.num_samples
+ *
+ * Get the number of samples
+ */
 static VALUE MpegEncoder_get_num_samples(VALUE self) {
   lame_global_flags * gfp;
 
@@ -378,6 +444,12 @@ static VALUE MpegEncoder_get_num_samples(VALUE self) {
   return ULONG2NUM(lame_get_num_samples(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.num_channels=
+ *
+ * Set the number of channels
+ */
 static VALUE MpegEncoder_set_num_channels(VALUE self, VALUE num_channels) {
   lame_global_flags * gfp;
 
@@ -386,6 +458,12 @@ static VALUE MpegEncoder_set_num_channels(VALUE self, VALUE num_channels) {
   return num_channels;
 }
 
+/*
+ * call-seq:
+ *    encoder.num_channels
+ *
+ * Get the number of channels
+ */
 static VALUE MpegEncoder_get_num_channels(VALUE self) {
   lame_global_flags * gfp;
 
@@ -393,6 +471,12 @@ static VALUE MpegEncoder_get_num_channels(VALUE self) {
   return INT2NUM(lame_get_num_channels(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.framesize
+ *
+ * Get the framesize
+ */
 static VALUE MpegEncoder_get_framesize(VALUE self) {
   lame_global_flags * gfp;
 
@@ -400,6 +484,12 @@ static VALUE MpegEncoder_get_framesize(VALUE self) {
   return INT2NUM(lame_get_framesize(gfp));
 }
 
+/*
+ * call-seq:
+ *    encoder.encoder_buffer(left, right)
+ *
+ * Get the encoder buffer
+ */
 static VALUE MpegEncoder_encoder_buffer(VALUE self, VALUE left, VALUE right) {
   unsigned char mp3buffer[LAME_MAXMP3BUFFER];
   int * buffer_left;
@@ -434,6 +524,12 @@ static VALUE MpegEncoder_encoder_buffer(VALUE self, VALUE left, VALUE right) {
   return rb_str_new(mp3buffer, imp3);
 }
 
+/*
+ * call-seq:
+ *    encoder.flush
+ *
+ * Flush the encoder
+ */
 static VALUE MpegEncoder_flush(VALUE self) {
   unsigned char mp3buffer[LAME_MAXMP3BUFFER];
   int imp3;
@@ -450,6 +546,12 @@ static VALUE MpegEncoder_flush(VALUE self) {
   return rb_str_new(mp3buffer, imp3);
 }
 
+/*
+ * call-seq:
+ *    encoder.write_vbr_tags(outfile)
+ *
+ * Write the VBR tags to +outfile+
+ */
 static VALUE MpegEncoder_write_vbr_tags(VALUE self, VALUE outfile) {
   OpenFile *fp;
   lame_global_flags * gfp;
@@ -461,6 +563,12 @@ static VALUE MpegEncoder_write_vbr_tags(VALUE self, VALUE outfile) {
   return Qnil;
 }
 
+/*
+ * call-seq:
+ *    encoder.init_params
+ *
+ * Initialize lame parameters.
+ */
 static VALUE MpegEncoder_init_params(VALUE self) {
   lame_global_flags * gfp;
 

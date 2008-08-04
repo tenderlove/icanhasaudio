@@ -163,8 +163,8 @@ void Init_icanhasaudio() {
   rb_mOgg = rb_define_module_under(rb_mAudio, "OGG");
   rb_cOggDecoder = rb_define_class_under(rb_mOgg, "Decoder", rb_cObject);
 
-  /* VERSION = '0.1.0' */
-  rb_define_const(rb_cDecoder, "VERSION", rb_str_new2("0.1.0"));
+  /* VERSION = '0.1.1' */
+  rb_define_const(rb_cDecoder, "VERSION", rb_str_new2("0.1.1"));
   rb_define_singleton_method(
       rb_cDecoder,
       "lame_version",
