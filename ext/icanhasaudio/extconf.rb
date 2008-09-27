@@ -50,5 +50,5 @@ end
   end
 end
 
-dir_config('icanhasaudio')
-create_makefile('icanhasaudio')
+dir_config('icanhasaudio/native')
+create_makefile('icanhasaudio/native')

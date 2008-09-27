@@ -1,4 +1,4 @@
-#include <icanhasaudio.h>
+#include <native.h>
 
 #define MAX_U_32_NUM 0xFFFFFFFF
 

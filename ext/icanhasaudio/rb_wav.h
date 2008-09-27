@@ -1,4 +1,4 @@
-#include <icanhasaudio.h>
+#include <native.h>
 
 void prelim_header( VALUE self,
                     char *headbuf,

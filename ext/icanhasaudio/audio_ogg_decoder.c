@@ -1,6 +1,10 @@
-#include <icanhasaudio.h>
+#include <native.h>
 
-size_t rb_ogg_read(void *ptr, size_t size, size_t nmemb, void *datasource) {
+static size_t rb_ogg_read(  void *ptr,
+                            size_t size,
+                            size_t nmemb,
+                            void *datasource)
+{
   VALUE file = (VALUE)datasource;
   VALUE str;
   size_t length;
@@ -26,24 +30,24 @@ int rb_ogg_seek(void *datasource, ogg_int64_t offset, int whence) {
   return -1;
 }
 
-int rb_ogg_close(void *datasource) {
+static int rb_ogg_close(void *datasource) {
   VALUE file = (VALUE)datasource;
   rb_funcall(file, rb_intern("close"), 0);
   return 0;
 }
 
-long rb_ogg_tell(void *datasource) {
+static long rb_ogg_tell(void *datasource) {
   VALUE file = (VALUE)datasource;
   return NUM2LONG(rb_funcall(file, rb_intern("tell"), 0));
 }
 
 /*
  * call-seq:
- *    decoder.decode(input_io, output_io)
+ *    decode(input_io, output_io)
  *
  * Decode the input IO and write it to the output IO.
  */
-VALUE method_ogg_decode(VALUE self, VALUE infile, VALUE outf) {
+VALUE decode(VALUE self, VALUE infile, VALUE outf) {
   OggVorbis_File vf;
   ov_callbacks callbacks;
   int bs = 0;
@@ -133,4 +137,12 @@ VALUE method_ogg_decode(VALUE self, VALUE infile, VALUE outf) {
   ov_clear(&vf);
 
   return Qnil;
+}
+void init_audio_ogg_decoder()
+{
+  VALUE rb_mAudio = rb_define_module("Audio");
+  VALUE rb_mOgg   = rb_define_module_under(rb_mAudio, "OGG");
+  VALUE klass     = rb_define_class_under(rb_mOgg, "Decoder", rb_cObject);
+
+  rb_define_method(klass, "decode", decode, 2);
 }

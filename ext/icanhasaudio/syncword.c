@@ -1,4 +1,4 @@
-#include <icanhasaudio.h>
+#include <native.h>
 
 /*
  * Taken from lame, get_audio.c

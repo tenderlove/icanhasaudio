@@ -6,26 +6,12 @@
  *
  * Released under the GPL
  */
-#include <icanhasaudio.h>
-
-static VALUE rb_mAudio;
-static VALUE rb_mMpeg;
-static VALUE rb_cDecoder;
-static VALUE rb_mOgg;
-static VALUE rb_cOggDecoder;
+#include <native.h>
 
 static void reader_mark(lame_global_flags * lgf) {}
 static void reader_free(lame_global_flags * gfp) {
   lame_close(gfp);
 }
-
-/*
- * call-seq:
- *    decoder.decode(input_io, output_io)
- *
- * Decode the input IO and write it to the output IO.
- */
-VALUE method_ogg_decode(VALUE self, VALUE infile, VALUE outf);
 
 /*
  * call-seq:
@@ -151,16 +137,11 @@ static VALUE method_lame_decode(VALUE self, VALUE file, VALUE outf) {
   return Qnil;
 }
 
-void Init_icanhasaudio() {
-  rb_mAudio = rb_define_module("Audio");
-  rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
-  rb_cDecoder = rb_define_class_under(rb_mMpeg, "Decoder", rb_cObject);
+void init_audio_mpeg_decoder() {
+  VALUE rb_mAudio = rb_define_module("Audio");
+  VALUE rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
+  VALUE rb_cDecoder = rb_define_class_under(rb_mMpeg, "Decoder", rb_cObject);
 
-  rb_mOgg = rb_define_module_under(rb_mAudio, "OGG");
-  rb_cOggDecoder = rb_define_class_under(rb_mOgg, "Decoder", rb_cObject);
-
-  /* VERSION = '0.1.1' */
-  rb_define_const(rb_cDecoder, "VERSION", rb_str_new2("0.1.1"));
   rb_define_singleton_method(
       rb_cDecoder,
       "lame_version",
@@ -170,10 +151,4 @@ void Init_icanhasaudio() {
 
   rb_define_alloc_func(rb_cDecoder, reader_allocate);
   rb_define_method(rb_cDecoder, "decode", method_lame_decode, 2);
-  rb_define_method(rb_cOggDecoder, "decode", method_ogg_decode, 2);
-
-  init_MpegEncoder(rb_mMpeg);
-  rb_require("icanhasaudio/mpeg");
-  rb_require("icanhasaudio/ogg");
 }
-

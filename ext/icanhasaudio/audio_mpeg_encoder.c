@@ -1,8 +1,7 @@
-#include <icanhasaudio.h>
+#include <native.h>
 
-static VALUE cMpegEncoder;
-
-static void encoder_free(lame_global_flags * gfp) {
+static void encoder_free(lame_global_flags * gfp)
+{
   lame_close(gfp);
 }
 
@@ -12,8 +11,8 @@ static void encoder_free(lame_global_flags * gfp) {
  *
  * Returns a new MPEG Encoder object.
  */
-static VALUE
-encoder_allocate(VALUE klass) {
+static VALUE encoder_allocate(VALUE klass)
+{
   lame_global_flags * gfp = lame_init();
   id3tag_init(gfp);
 
@@ -29,7 +28,8 @@ encoder_allocate(VALUE klass) {
  * Strictly enforce the vbr min bitrate.  Normally it will be violated for
  * analog silence.
  */
-static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean) {
+static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean)
+{
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -43,7 +43,8 @@ static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean) {
  *
  *  Get the hard minimum flag. 
  */
-static VALUE MpegEncoder_get_vbr_hard_min(VALUE self) {
+static VALUE MpegEncoder_get_vbr_hard_min(VALUE self)
+{
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -56,7 +57,8 @@ static VALUE MpegEncoder_get_vbr_hard_min(VALUE self) {
  *
  * Set the maximum vbr bitrate.
  */
-static VALUE MpegEncoder_set_vbr_max_bitrate(VALUE self, VALUE brate) {
+static VALUE MpegEncoder_set_vbr_max_bitrate(VALUE self, VALUE brate)
+{
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -580,18 +582,15 @@ static VALUE MpegEncoder_init_params(VALUE self) {
   return Qnil;
 }
 
-void init_MpegEncoder(VALUE rb_mMpeg) {
-  /*
-  rb_mAudio = rb_define_module("Audio");
-  rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
-  */
+void init_audio_mpeg_encoder()
+{
+  VALUE rb_mAudio = rb_define_module("Audio");
+  VALUE rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
   /*
    * Encode mp3s
    */
-  cMpegEncoder = rb_define_class_under(rb_mMpeg, "Encoder", rb_cObject);
+  VALUE cMpegEncoder = rb_define_class_under(rb_mMpeg, "Encoder", rb_cObject);
   rb_define_alloc_func(cMpegEncoder, encoder_allocate);
-
-  /* Public Methods */
 
   rb_define_method(cMpegEncoder, "vbr_quality=",MpegEncoder_set_vbr_quality, 1);
   rb_define_method(cMpegEncoder, "vbr_quality", MpegEncoder_get_vbr_quality, 0);

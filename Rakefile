@@ -11,19 +11,24 @@ Hoe.new('icanhasaudio', '0.1.1') do |p|
   p.summary         = "icanhasaudio is a lame/vorbis wrapper for decoding ur mp3s and ur oggs."
   p.description     = p.paragraphs_of('README.txt', 3..6).join("\n\n")
   p.url             = p.paragraphs_of('README.txt', 1).first.strip
-  p.spec_extras     = { :extensions => ['ext/extconf.rb'] }
-  p.clean_globs     = ["ext/Makefile", "ext/*.{o,so,bundle,log}"]
+  p.spec_extras     = {
+    :extensions => ['ext/icanhasaudio/extconf.rb']
+  }
+  p.clean_globs     = [
+    "ext/icanhasaudio/Makefile",
+    "ext/icanhasaudio/*.{o,so,bundle,log}"
+  ]
 end
 
 Rake::Task[:test].prerequisites << :extension
 
 desc "I can haz binary"
-task :extension => ["ext/icanhasaudio.#{kind}"]
+task :extension => ["ext/icanhasaudio/native.#{kind}"]
 
-file "ext/Makefile" => "ext/extconf.rb" do
-  Dir.chdir("ext") { ruby "extconf.rb" }
+file "ext/icanhasaudio/Makefile" => "ext/icanhasaudio/extconf.rb" do
+  Dir.chdir("ext/icanhasaudio") { ruby "extconf.rb" }
 end
 
-file "ext/icanhasaudio.#{kind}" => FileList["ext/Makefile", "ext/*.{c,h}"] do
-  Dir.chdir("ext") { sh "make" }
+file "ext/icanhasaudio/native.#{kind}" => FileList["ext/icanhasaudio/Makefile", "ext/icanhasaudio/*.{c,h}"] do
+  Dir.chdir("ext/icanhasaudio") { sh "make" }
 end
