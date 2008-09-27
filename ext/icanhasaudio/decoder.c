@@ -21,6 +21,7 @@ lame_decoder(VALUE self, VALUE infile, VALUE outf, mp3data_struct * mp3data)
 
   Data_Get_Struct(self, lame_global_flags, gfp);
   tmp_num_channels = lame_get_num_channels( gfp );
+  lame_set_num_samples(gfp, MAX_U_32_NUM);
 
   skip = lame_get_encoder_delay(gfp)+528+1;
 
@@ -37,6 +38,9 @@ lame_decoder(VALUE self, VALUE infile, VALUE outf, mp3data_struct * mp3data)
   }
 
   wavsize = -skip;
+  if(lame_get_num_samples(gfp) == MAX_U_32_NUM) {
+    VALUE samples = rb_funcall(self, rb_intern("determine_samples_for"), 1, infile);
+  }
   mp3data->totalframes = mp3data->nsamp / mp3data->framesize;
 
   assert(tmp_num_channels >= 1 && tmp_num_channels <= 2);

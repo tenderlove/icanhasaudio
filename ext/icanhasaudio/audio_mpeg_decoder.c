@@ -71,41 +71,41 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
     len = 4;
     str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
     buf = (unsigned char *)StringValuePtr(str);
+  }
 
-    /* Check for Album ID */
-    if(0 == rb_str_cmp(str, rb_str_new2("AiD\1"))) {
-      /* FIXME */
-      rb_raise(rb_eRuntimeError, "Found Album ID.\n");
+  /* Check for Album ID */
+  if(0 == rb_str_cmp(str, rb_str_new2("AiD\1"))) {
+    /* FIXME */
+    rb_raise(rb_eRuntimeError, "Found Album ID.\n");
+  }
+
+  while (!is_syncword_mp123(buf)) {
+    int i;
+    for(i = 0; i < len - 1; i++) {
+      buf[i] = buf[i + 1];
     }
+    buf[len - 1] = NUM2INT(rb_funcall(file, rb_intern("getc"), 0));
+  }
 
-    while (!is_syncword_mp123(buf)) {
-      int i;
-      for(i = 0; i < len - 1; i++) {
-        buf[i] = buf[i + 1];
-      }
-      buf[len - 1] = NUM2INT(rb_funcall(file, rb_intern("getc"), 0));
-    }
+  if ((buf[2] & 0xF0) == 0) {
+    printf("Input file is freeformat\n");
+  }
 
-    if ((buf[2] & 0xF0) == 0) {
-      printf("Input file is freeformat\n");
-    }
+  ret = lame_decode1_headersB(buf, len, pcm_l, pcm_r, mp3data, &enc_delay, &enc_padding);
+  if(ret == -1)
+    rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
 
-    ret = lame_decode1_headersB(buf, len, pcm_l, pcm_r, mp3data, &enc_delay, &enc_padding);
+  while(!mp3data->header_parsed) {
+    str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(100));
+    buf = (unsigned char *)StringValuePtr(str);
+    ret = lame_decode1_headersB(buf, 100, pcm_l, pcm_r, mp3data,&enc_delay,&enc_padding);
     if(ret == -1)
       rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
+  }
 
-    while(!mp3data->header_parsed) {
-      str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(100));
-      buf = (unsigned char *)StringValuePtr(str);
-      ret = lame_decode1_headersB(buf, 100, pcm_l, pcm_r, mp3data,&enc_delay,&enc_padding);
-      if(ret == -1)
-        rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
-    }
-
-    if(mp3data->totalframes > 0) {
-    } else {
-      mp3data->nsamp = MAX_U_32_NUM;
-    }
+  if(mp3data->totalframes > 0) {
+  } else {
+    mp3data->nsamp = MAX_U_32_NUM;
   }
   return 0;
 }
@@ -116,7 +116,7 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
  *
  * Decode the input IO and write it to the output IO.
  */
-static VALUE method_lame_decode(VALUE self, VALUE file, VALUE outf) {
+static VALUE decode(VALUE self, VALUE file, VALUE outf) {
   mp3data_struct mp3data;
   lame_global_flags * gfp;
 
@@ -137,6 +137,21 @@ static VALUE method_lame_decode(VALUE self, VALUE file, VALUE outf) {
   return Qnil;
 }
 
+static VALUE set_num_samples(VALUE self, VALUE sample_count)
+{
+  lame_global_flags * gfp;
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  lame_set_num_samples(gfp, NUM2INT(sample_count));
+  return sample_count;
+}
+
+static VALUE get_in_samplerate(VALUE self)
+{
+  lame_global_flags * gfp;
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return INT2NUM(lame_get_in_samplerate(gfp));
+}
+
 void init_audio_mpeg_decoder() {
   VALUE rb_mAudio = rb_define_module("Audio");
   VALUE rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
@@ -150,5 +165,7 @@ void init_audio_mpeg_decoder() {
   );
 
   rb_define_alloc_func(rb_cDecoder, reader_allocate);
-  rb_define_method(rb_cDecoder, "decode", method_lame_decode, 2);
+  rb_define_method(rb_cDecoder, "decode", decode, 2);
+  rb_define_method(rb_cDecoder, "num_samples=", set_num_samples, 1);
+  rb_define_method(rb_cDecoder, "in_samplerate", get_in_samplerate, 0);
 }
