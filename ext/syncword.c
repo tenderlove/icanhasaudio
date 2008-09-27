@@ -1,3 +1,5 @@
+#include <icanhasaudio.h>
+
 /*
  * Taken from lame, get_audio.c
  */

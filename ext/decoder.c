@@ -1,9 +1,4 @@
-#include <ruby.h>
-#include <lame/lame.h>
-#include <assert.h>
-#include <decoder.h>
-#include <get_audio.h>
-#include <rb_wav.h>
+#include <icanhasaudio.h>
 
 int
 lame_decoder(VALUE self, VALUE infile, VALUE outf, mp3data_struct * mp3data)

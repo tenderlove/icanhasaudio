@@ -1,5 +1,4 @@
-#include <ruby.h>
-#include <rb_wav.h>
+#include <icanhasaudio.h>
 
 #define WRITE_U32(buf, x) *(buf)     = (unsigned char)((x)&0xff);\
                           *((buf)+1) = (unsigned char)(((x)>>8)&0xff);\

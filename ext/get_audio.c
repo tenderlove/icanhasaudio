@@ -1,7 +1,4 @@
-#include <ruby.h>
-#include <assert.h>
-#include <lame/lame.h>
-#include "get_audio.h"
+#include <icanhasaudio.h>
 
 #define MAX_U_32_NUM 0xFFFFFFFF
 

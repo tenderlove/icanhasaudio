@@ -6,11 +6,7 @@
  *
  * Released under the GPL
  */
-#include "icanhasaudio.h"
-#include "syncword.h"
-#include "decoder.h"
-#include "mpeg_encoder.h"
-#include "get_audio.h"
+#include <icanhasaudio.h>
 
 static VALUE rb_mAudio;
 static VALUE rb_mMpeg;

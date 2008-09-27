@@ -1,5 +1,4 @@
-#include <ogg/ogg.h>
-#include <vorbis/vorbisfile.h>
+#include <icanhasaudio.h>
 
 void prelim_header( VALUE self,
                     char *headbuf,

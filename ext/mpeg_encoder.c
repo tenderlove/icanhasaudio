@@ -1,5 +1,4 @@
-#include "mpeg_encoder.h"
-#include <rubyio.h>
+#include <icanhasaudio.h>
 
 static VALUE cMpegEncoder;
 

@@ -1,7 +1,4 @@
-#include <ruby.h>
-#include <ogg/ogg.h>
-#include <vorbis/vorbisfile.h>
-#include <rb_wav.h>
+#include <icanhasaudio.h>
 
 size_t rb_ogg_read(void *ptr, size_t size, size_t nmemb, void *datasource) {
   VALUE file = (VALUE)datasource;
