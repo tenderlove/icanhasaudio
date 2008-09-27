@@ -54,11 +54,11 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
   short int pcm_l[1152], pcm_r[1152];
 
   str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-  buf = StringValuePtr(str);
+  buf = (unsigned char *)StringValuePtr(str);
   if(buf[0] == 'I' && buf[1] == 'D' && buf[2] == '3') {
     len = 6;
     str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-    buf = StringValuePtr(str);
+    buf = (unsigned char *)StringValuePtr(str);
 
     buf[2] &= 127; buf[3] &= 127; buf[4] &= 127; buf[5] &= 127;
     len = (((((buf[2] << 7) + buf[3]) << 7) + buf[4]) << 7) + buf[5];
@@ -70,7 +70,7 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
 
     len = 4;
     str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-    buf = StringValuePtr(str);
+    buf = (unsigned char *)StringValuePtr(str);
 
     /* Check for Album ID */
     if(0 == rb_str_cmp(str, rb_str_new2("AiD\1"))) {
@@ -96,7 +96,7 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
 
     while(!mp3data->header_parsed) {
       str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(100));
-      buf = StringValuePtr(str);
+      buf = (unsigned char *)StringValuePtr(str);
       ret = lame_decode1_headersB(buf, 100, pcm_l, pcm_r, mp3data,&enc_delay,&enc_padding);
       if(ret == -1)
         rb_raise(rb_eRuntimeError, "Decode headers failed.\n");

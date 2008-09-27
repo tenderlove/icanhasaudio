@@ -252,10 +252,9 @@ static VALUE MpegEncoder_set_album(VALUE self, VALUE album) {
  */
 static VALUE MpegEncoder_set_year(VALUE self, VALUE year) {
   lame_global_flags * gfp;
-  VALUE * year_string;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
-  year_string = rb_funcall(year, rb_intern("to_s"), 0);
+  VALUE year_string = rb_funcall(year, rb_intern("to_s"), 0);
   id3tag_set_year(gfp, StringValuePtr(year_string));
   return year;
 }
@@ -268,15 +267,13 @@ static VALUE MpegEncoder_set_year(VALUE self, VALUE year) {
  */
 static VALUE MpegEncoder_set_track(VALUE self, VALUE track) {
   lame_global_flags * gfp;
-  int track_number;
-  VALUE * track_string;
 
-  track_number = NUM2INT(track);
+  int track_number = NUM2INT(track);
   if(track < 0 || track > 255)
     rb_raise(rb_eRuntimeError, "Track must be between 0 and 255.\n");
 
   Data_Get_Struct(self, lame_global_flags, gfp);
-  track_string = rb_funcall(track, rb_intern("to_s"), 0);
+  VALUE track_string = rb_funcall(track, rb_intern("to_s"), 0);
   id3tag_set_track(gfp, StringValuePtr(track_string));
   return track;
 }
@@ -522,7 +519,7 @@ static VALUE MpegEncoder_encoder_buffer(VALUE self, VALUE left, VALUE right) {
     else
       rb_raise(rb_eRuntimeError, "internal error.\n");
   }
-  return rb_str_new(mp3buffer, imp3);
+  return rb_str_new((const char *)mp3buffer, imp3);
 }
 
 /*
@@ -544,7 +541,7 @@ static VALUE MpegEncoder_flush(VALUE self) {
     else
       rb_raise(rb_eRuntimeError, "internal error.\n");
   }
-  return rb_str_new(mp3buffer, imp3);
+  return rb_str_new((const char *)mp3buffer, imp3);
 }
 
 /*
