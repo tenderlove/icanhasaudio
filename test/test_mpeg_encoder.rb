@@ -1,8 +1,6 @@
-require 'test/unit'
-require 'icanhasaudio'
-require 'tempfile'
+require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
-class MPEGEncoderTest < Test::Unit::TestCase
+class MPEGEncoderTest < ICANHASAUDIO::TestCase
   include Audio::MPEG
 
   WAV_FILE = File.dirname(__FILE__) + "/assets/testcase.wav"

@@ -10,10 +10,10 @@
 #include <vorbis/vorbisfile.h>
 
 #include <syncword.h>
-#include <decoder.h>
 #include <get_audio.h>
 #include <rb_wav.h>
 #include <audio_mpeg_decoder.h>
+#include <audio_mpeg_decoder_mp3data.h>
 #include <audio_mpeg_encoder.h>
 #include <audio_ogg_decoder.h>
 

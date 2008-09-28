@@ -6,7 +6,7 @@
  *
  * Released under the GPL
  */
-#include <native.h>
+#include <audio_mpeg_decoder.h>
 
 static void reader_mark(lame_global_flags * lgf) {}
 static void reader_free(lame_global_flags * gfp) {
@@ -44,70 +44,30 @@ static VALUE method_lame_version(VALUE klass) {
   return rb_str_new(version, strlen(version));
 }
 
-static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
-  unsigned char * buf;
-  VALUE str;
-  int len = 4;
+static VALUE decode_headers_for(VALUE self, VALUE rb_buffer)
+{
   int enc_delay;
   int enc_padding;
-  int ret;
+  mp3data_struct * mp3data;
+
+  unsigned char * buf = (unsigned char *)StringValuePtr(rb_buffer);
+  int len = NUM2INT(rb_funcall(rb_buffer, rb_intern("length"), 0));
   short int pcm_l[1152], pcm_r[1152];
 
-  str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-  buf = (unsigned char *)StringValuePtr(str);
-  if(buf[0] == 'I' && buf[1] == 'D' && buf[2] == '3') {
-    len = 6;
-    str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-    buf = (unsigned char *)StringValuePtr(str);
+  VALUE rb_mp3data = rb_funcall(self, rb_intern("mp3data"), 0);
+  Data_Get_Struct(rb_mp3data, mp3data_struct, mp3data);
 
-    buf[2] &= 127; buf[3] &= 127; buf[4] &= 127; buf[5] &= 127;
-    len = (((((buf[2] << 7) + buf[3]) << 7) + buf[4]) << 7) + buf[5];
+  int ret = lame_decode1_headersB(buf,
+                                  len,
+                                  pcm_l,
+                                  pcm_r,
+                                  mp3data,
+                                  &enc_delay,
+                                  &enc_padding
+  );
 
-    rb_funcall( file,
-                rb_intern("read"),
-                1,
-                INT2NUM(len));
-
-    len = 4;
-    str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(len));
-    buf = (unsigned char *)StringValuePtr(str);
-  }
-
-  /* Check for Album ID */
-  if(0 == rb_str_cmp(str, rb_str_new2("AiD\1"))) {
-    /* FIXME */
-    rb_raise(rb_eRuntimeError, "Found Album ID.\n");
-  }
-
-  while (!is_syncword_mp123(buf)) {
-    int i;
-    for(i = 0; i < len - 1; i++) {
-      buf[i] = buf[i + 1];
-    }
-    buf[len - 1] = NUM2INT(rb_funcall(file, rb_intern("getc"), 0));
-  }
-
-  if ((buf[2] & 0xF0) == 0) {
-    printf("Input file is freeformat\n");
-  }
-
-  ret = lame_decode1_headersB(buf, len, pcm_l, pcm_r, mp3data, &enc_delay, &enc_padding);
   if(ret == -1)
     rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
-
-  while(!mp3data->header_parsed) {
-    str = rb_funcall(file, rb_intern("read"), 1, INT2NUM(100));
-    buf = (unsigned char *)StringValuePtr(str);
-    ret = lame_decode1_headersB(buf, 100, pcm_l, pcm_r, mp3data,&enc_delay,&enc_padding);
-    if(ret == -1)
-      rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
-  }
-
-  if(mp3data->totalframes > 0) {
-  } else {
-    mp3data->nsamp = MAX_U_32_NUM;
-  }
-  return 0;
 }
 
 /*
@@ -116,24 +76,97 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
  *
  * Decode the input IO and write it to the output IO.
  */
-static VALUE native_decode(VALUE self, VALUE file, VALUE outf) {
-  mp3data_struct mp3data;
+static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
   lame_global_flags * gfp;
+  short int Buffer[2][1152];
+  int     iread;
+  double  wavsize;
+  int     i;
+  int tmp_num_channels;
+  int skip;
+  char headbuf[44];
+  VALUE raw;
+  mp3data_struct * mp3data;
 
-  memset(&mp3data, 0, sizeof(mp3data_struct));
-  lame_decode_initfile(file, &mp3data);
+  VALUE rb_mp3data = rb_funcall(self, rb_intern("mp3data"), 0);
+  Data_Get_Struct(rb_mp3data, mp3data_struct, mp3data);
 
-  Data_Get_Struct (self, lame_global_flags, gfp);
+  raw = rb_iv_get(self, "@raw");
+  if(raw == Qnil) {
+    raw = Qfalse;
+    rb_iv_set(self, "@raw", Qfalse);
+  }
 
-  rb_iv_set(self, "@stereo", INT2NUM(mp3data.stereo));
-  rb_iv_set(self, "@samplerate", INT2NUM(mp3data.samplerate));
-  rb_iv_set(self, "@bitrate", INT2NUM(mp3data.bitrate));
-  rb_iv_set(self, "@mode", INT2NUM(mp3data.mode));
-  rb_iv_set(self, "@mode_ext", INT2NUM(mp3data.mode_ext));
-  rb_iv_set(self, "@framesize", INT2NUM(mp3data.framesize));
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  tmp_num_channels = lame_get_num_channels( gfp );
+  lame_set_num_samples(gfp, MAX_U_32_NUM);
 
-  lame_decoder(self, file, outf, &mp3data);
+  skip = lame_get_encoder_delay(gfp)+528+1;
 
+  if(!raw) {
+    rb_iv_set(self, "@bits", INT2NUM(16));
+    prelim_header(  self,
+                    headbuf,
+                    0x7FFFFFFF,
+                    0,
+                    tmp_num_channels,
+                    lame_get_in_samplerate( gfp )
+                    );
+    rb_funcall(outf, rb_intern("write"), 1, rb_str_new(headbuf, 44));
+  }
+
+  wavsize = -skip;
+  if(lame_get_num_samples(gfp) == MAX_U_32_NUM) {
+    VALUE samples = rb_funcall(self, rb_intern("determine_samples_for"), 1, infile);
+  }
+  mp3data->totalframes = mp3data->nsamp / mp3data->framesize;
+
+  assert(tmp_num_channels >= 1 && tmp_num_channels <= 2);
+
+  do {
+    char BitBuffer16[1152 * 4];
+    int bit_16_i = 0;
+    int total = 0;
+    iread = get_audio16(self, infile, Buffer, mp3data);
+    mp3data->framenum += iread / mp3data->framesize;
+    wavsize += iread;
+
+    memset(&BitBuffer16, 0, 1152 * 4);
+
+    skip -= (i = skip < iread ? skip : iread); /* 'i' samples are to skip in this frame */
+
+    for (; i < iread; i++) {
+      /* Write the 0 channel */
+      BitBuffer16[bit_16_i] = Buffer[0][i] & 0xFF;
+      BitBuffer16[bit_16_i + 1] = ((Buffer[0][i] >> 8) & 0xFF);
+
+      if (tmp_num_channels == 2) {
+        BitBuffer16[bit_16_i + 2] = Buffer[1][i] & 0xFF;
+        BitBuffer16[bit_16_i + 3] = ((Buffer[1][i] >> 8) & 0xFF);
+        bit_16_i += 4;
+      } else {
+        bit_16_i += 2;
+      }
+    }
+    rb_funcall(outf, rb_intern("write"), 1, rb_str_new(BitBuffer16, bit_16_i));
+  } while (iread);
+
+  i = (16 / 8) * tmp_num_channels;
+  assert(i > 0);
+  if (wavsize <= 0) {
+      wavsize = 0;
+  }
+  else if (wavsize > 0xFFFFFFD0 / i) {
+      wavsize = 0xFFFFFFD0;
+  }
+  else {
+      wavsize *= i;
+  }
+
+  if(!raw && rb_funcall(self, rb_intern("attempt_rewind"), 1, outf)) {
+    rewrite_header(headbuf, (int)wavsize);
+    rb_funcall(outf, rb_intern("write"), 1, rb_str_new(headbuf, 44));
+  }
   return Qnil;
 }
 
@@ -180,4 +213,5 @@ void init_audio_mpeg_decoder() {
   rb_define_method(rb_cDecoder, "num_samples=", set_num_samples, 1);
   rb_define_method(rb_cDecoder, "in_samplerate", get_in_samplerate, 0);
   rb_define_private_method(rb_cDecoder, "native_decode", native_decode, 2);
+  rb_define_private_method(rb_cDecoder, "decode_headers_for", decode_headers_for, 1);
 }
