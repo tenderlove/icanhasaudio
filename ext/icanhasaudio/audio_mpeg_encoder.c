@@ -28,7 +28,7 @@ static VALUE encoder_allocate(VALUE klass)
  * Strictly enforce the vbr min bitrate.  Normally it will be violated for
  * analog silence.
  */
-static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean)
+static VALUE set_vbr_hard_min(VALUE self, VALUE boolean)
 {
   lame_global_flags * gfp;
 
@@ -43,7 +43,7 @@ static VALUE MpegEncoder_set_vbr_hard_min(VALUE self, VALUE boolean)
  *
  *  Get the hard minimum flag. 
  */
-static VALUE MpegEncoder_get_vbr_hard_min(VALUE self)
+static VALUE get_vbr_hard_min(VALUE self)
 {
   lame_global_flags * gfp;
 
@@ -57,7 +57,7 @@ static VALUE MpegEncoder_get_vbr_hard_min(VALUE self)
  *
  * Set the maximum vbr bitrate.
  */
-static VALUE MpegEncoder_set_vbr_max_bitrate(VALUE self, VALUE brate)
+static VALUE set_vbr_max_bitrate(VALUE self, VALUE brate)
 {
   lame_global_flags * gfp;
 
@@ -72,7 +72,7 @@ static VALUE MpegEncoder_set_vbr_max_bitrate(VALUE self, VALUE brate)
  *
  * Get the maximum vbr bitrate.
  */
-static VALUE MpegEncoder_get_vbr_max_bitrate(VALUE self) {
+static VALUE get_vbr_max_bitrate(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -85,7 +85,7 @@ static VALUE MpegEncoder_get_vbr_max_bitrate(VALUE self) {
  *
  * Set the minimum vbr bitrate.
  */
-static VALUE MpegEncoder_set_vbr_min_bitrate(VALUE self, VALUE brate) {
+static VALUE set_vbr_min_bitrate(VALUE self, VALUE brate) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -99,7 +99,7 @@ static VALUE MpegEncoder_set_vbr_min_bitrate(VALUE self, VALUE brate) {
  *
  * Get the minimum vbr bitrate.
  */
-static VALUE MpegEncoder_get_vbr_min_bitrate(VALUE self) {
+static VALUE get_vbr_min_bitrate(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -112,7 +112,7 @@ static VALUE MpegEncoder_get_vbr_min_bitrate(VALUE self) {
  *
  * Set the bitrate.
  */
-static VALUE MpegEncoder_set_bitrate(VALUE self, VALUE brate) {
+static VALUE set_bitrate(VALUE self, VALUE brate) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -127,7 +127,7 @@ static VALUE MpegEncoder_set_bitrate(VALUE self, VALUE brate) {
  *
  * Get the bitrate.
  */
-static VALUE MpegEncoder_get_bitrate(VALUE self) {
+static VALUE get_bitrate(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -140,7 +140,7 @@ static VALUE MpegEncoder_get_bitrate(VALUE self) {
  *
  * Set the VBR quality. 0 = highest, 9 = lowest
  */
-static VALUE MpegEncoder_set_vbr_quality(VALUE self, VALUE quality) {
+static VALUE set_vbr_quality(VALUE self, VALUE quality) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -154,7 +154,7 @@ static VALUE MpegEncoder_set_vbr_quality(VALUE self, VALUE quality) {
  *
  * Get the VBR quality. 0 = highest, 9 = lowest
  */
-static VALUE MpegEncoder_get_vbr_quality(VALUE self) {
+static VALUE get_vbr_quality(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -167,7 +167,7 @@ static VALUE MpegEncoder_get_vbr_quality(VALUE self) {
  *
  * Set the type of VBR. Must be VBR_OFF, VBR_NORMAL, or VBR_FAST
  */
-static VALUE MpegEncoder_set_vbr_type(VALUE self, VALUE type) {
+static VALUE set_vbr_type(VALUE self, VALUE type) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -181,7 +181,7 @@ static VALUE MpegEncoder_set_vbr_type(VALUE self, VALUE type) {
  *
  * Get the type of VBR.
  */
-static VALUE MpegEncoder_get_vbr_type(VALUE self) {
+static VALUE get_vbr_type(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -194,7 +194,7 @@ static VALUE MpegEncoder_get_vbr_type(VALUE self) {
  *
  * Print the encoder configuration.
  */
-static VALUE MpegEncoder_print_config(VALUE self) {
+static VALUE print_config(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -208,7 +208,7 @@ static VALUE MpegEncoder_print_config(VALUE self) {
  *
  * Set the ID3 artist.
  */
-static VALUE MpegEncoder_set_artist(VALUE self, VALUE artist) {
+static VALUE set_artist(VALUE self, VALUE artist) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -222,7 +222,7 @@ static VALUE MpegEncoder_set_artist(VALUE self, VALUE artist) {
  *
  * Set the ID3 title.
  */
-static VALUE MpegEncoder_set_title(VALUE self, VALUE title) {
+static VALUE set_title(VALUE self, VALUE title) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -236,7 +236,7 @@ static VALUE MpegEncoder_set_title(VALUE self, VALUE title) {
  *
  * Set the ID3 album.
  */
-static VALUE MpegEncoder_set_album(VALUE self, VALUE album) {
+static VALUE set_album(VALUE self, VALUE album) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -250,7 +250,7 @@ static VALUE MpegEncoder_set_album(VALUE self, VALUE album) {
  *
  * Set the ID3 year.
  */
-static VALUE MpegEncoder_set_year(VALUE self, VALUE year) {
+static VALUE set_year(VALUE self, VALUE year) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -265,7 +265,7 @@ static VALUE MpegEncoder_set_year(VALUE self, VALUE year) {
  *
  * Set the ID3 track.
  */
-static VALUE MpegEncoder_set_track(VALUE self, VALUE track) {
+static VALUE set_track(VALUE self, VALUE track) {
   lame_global_flags * gfp;
 
   int track_number = NUM2INT(track);
@@ -284,7 +284,7 @@ static VALUE MpegEncoder_set_track(VALUE self, VALUE track) {
  *
  * Set the ID3 genre.
  */
-static VALUE MpegEncoder_set_genre(VALUE self, VALUE genre) {
+static VALUE set_genre(VALUE self, VALUE genre) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -300,7 +300,7 @@ static VALUE MpegEncoder_set_genre(VALUE self, VALUE genre) {
  *
  * Write the vbr tag
  */
-static VALUE MpegEncoder_write_vbr_tag(VALUE self) {
+static VALUE write_vbr_tag(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -315,7 +315,7 @@ static VALUE MpegEncoder_write_vbr_tag(VALUE self) {
  *
  * Print the lame internals.  For debugging
  */
-static VALUE MpegEncoder_print_internals(VALUE self) {
+static VALUE print_internals(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -329,7 +329,7 @@ static VALUE MpegEncoder_print_internals(VALUE self) {
  *
  * Get the mpeg quality
  */
-static VALUE MpegEncoder_get_mpeg_quality(VALUE self) {
+static VALUE get_mpeg_quality(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -342,7 +342,7 @@ static VALUE MpegEncoder_get_mpeg_quality(VALUE self) {
  *
  * Get the mpeg compression ratio
  */
-static VALUE MpegEncoder_get_compression_ratio(VALUE self) {
+static VALUE get_compression_ratio(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -355,7 +355,7 @@ static VALUE MpegEncoder_get_compression_ratio(VALUE self) {
  *
  * Get the mpeg version
  */
-static VALUE MpegEncoder_get_mpeg_version(VALUE self) {
+static VALUE get_mpeg_version(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -368,7 +368,7 @@ static VALUE MpegEncoder_get_mpeg_version(VALUE self) {
  *
  * Get the mpeg mode
  */
-static VALUE MpegEncoder_get_mpeg_mode(VALUE self) {
+static VALUE get_mpeg_mode(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -381,7 +381,7 @@ static VALUE MpegEncoder_get_mpeg_mode(VALUE self) {
  *
  * Get the force ms flag
  */
-static VALUE MpegEncoder_get_force_ms(VALUE self) {
+static VALUE get_force_ms(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -394,7 +394,7 @@ static VALUE MpegEncoder_get_force_ms(VALUE self) {
  *
  * Get the out samplerate
  */
-static VALUE MpegEncoder_get_out_samplerate(VALUE self) {
+static VALUE get_out_samplerate(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -407,7 +407,7 @@ static VALUE MpegEncoder_get_out_samplerate(VALUE self) {
  *
  * Set the input samplerate
  */
-static VALUE MpegEncoder_set_in_samplerate(VALUE self, VALUE samplerate) {
+static VALUE set_in_samplerate(VALUE self, VALUE samplerate) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -421,7 +421,7 @@ static VALUE MpegEncoder_set_in_samplerate(VALUE self, VALUE samplerate) {
  *
  * Set the number of samples
  */
-static VALUE MpegEncoder_set_num_samples(VALUE self, VALUE num_samples) {
+static VALUE set_num_samples(VALUE self, VALUE num_samples) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -435,7 +435,7 @@ static VALUE MpegEncoder_set_num_samples(VALUE self, VALUE num_samples) {
  *
  * Get the number of samples
  */
-static VALUE MpegEncoder_get_num_samples(VALUE self) {
+static VALUE get_num_samples(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -448,7 +448,7 @@ static VALUE MpegEncoder_get_num_samples(VALUE self) {
  *
  * Set the number of channels
  */
-static VALUE MpegEncoder_set_num_channels(VALUE self, VALUE num_channels) {
+static VALUE set_num_channels(VALUE self, VALUE num_channels) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -462,7 +462,7 @@ static VALUE MpegEncoder_set_num_channels(VALUE self, VALUE num_channels) {
  *
  * Get the number of channels
  */
-static VALUE MpegEncoder_get_num_channels(VALUE self) {
+static VALUE get_num_channels(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -475,7 +475,7 @@ static VALUE MpegEncoder_get_num_channels(VALUE self) {
  *
  * Get the framesize
  */
-static VALUE MpegEncoder_get_framesize(VALUE self) {
+static VALUE get_framesize(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -488,7 +488,7 @@ static VALUE MpegEncoder_get_framesize(VALUE self) {
  *
  * Get the encoder buffer
  */
-static VALUE MpegEncoder_encoder_buffer(VALUE self, VALUE left, VALUE right) {
+static VALUE encoder_buffer(VALUE self, VALUE left, VALUE right) {
   unsigned char mp3buffer[LAME_MAXMP3BUFFER];
   int * buffer_left;
   int * buffer_right;
@@ -528,7 +528,7 @@ static VALUE MpegEncoder_encoder_buffer(VALUE self, VALUE left, VALUE right) {
  *
  * Flush the encoder
  */
-static VALUE MpegEncoder_flush(VALUE self) {
+static VALUE flush(VALUE self) {
   unsigned char mp3buffer[LAME_MAXMP3BUFFER];
   int imp3;
   lame_global_flags * gfp;
@@ -550,7 +550,7 @@ static VALUE MpegEncoder_flush(VALUE self) {
  *
  * Write the VBR tags to +outfile+
  */
-static VALUE MpegEncoder_write_vbr_tags(VALUE self, VALUE outfile) {
+static VALUE write_vbr_tags(VALUE self, VALUE outfile) {
   OpenFile *fp;
   lame_global_flags * gfp;
 
@@ -567,7 +567,7 @@ static VALUE MpegEncoder_write_vbr_tags(VALUE self, VALUE outfile) {
  *
  * Initialize lame parameters.
  */
-static VALUE MpegEncoder_init_params(VALUE self) {
+static VALUE init_params(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
@@ -583,49 +583,46 @@ void init_audio_mpeg_encoder()
 {
   VALUE rb_mAudio = rb_define_module("Audio");
   VALUE rb_mMpeg = rb_define_module_under(rb_mAudio, "MPEG");
-  /*
-   * Encode mp3s
-   */
   VALUE cMpegEncoder = rb_define_class_under(rb_mMpeg, "Encoder", rb_cObject);
   rb_define_alloc_func(cMpegEncoder, encoder_allocate);
 
-  rb_define_method(cMpegEncoder, "vbr_quality=",MpegEncoder_set_vbr_quality, 1);
-  rb_define_method(cMpegEncoder, "vbr_quality", MpegEncoder_get_vbr_quality, 0);
-  rb_define_method(cMpegEncoder, "vbr_type=", MpegEncoder_set_vbr_type, 1);
-  rb_define_method(cMpegEncoder, "vbr_type", MpegEncoder_get_vbr_type, 0);
-  rb_define_method(cMpegEncoder, "print_config", MpegEncoder_print_config, 0);
-  rb_define_method(cMpegEncoder, "title=", MpegEncoder_set_title, 1);
-  rb_define_method(cMpegEncoder, "artist=", MpegEncoder_set_artist, 1);
-  rb_define_method(cMpegEncoder, "album=", MpegEncoder_set_album, 1);
-  rb_define_method(cMpegEncoder, "year=", MpegEncoder_set_year, 1);
-  rb_define_method(cMpegEncoder, "track=", MpegEncoder_set_track, 1);
-  rb_define_method(cMpegEncoder, "genre=", MpegEncoder_set_genre, 1);
-  rb_define_method(cMpegEncoder, "bitrate=", MpegEncoder_set_bitrate, 1);
-  rb_define_method(cMpegEncoder, "bitrate", MpegEncoder_get_bitrate, 0);
-  rb_define_method(cMpegEncoder, "vbr_min_bitrate=", MpegEncoder_set_vbr_min_bitrate, 1);
-  rb_define_method(cMpegEncoder, "vbr_min_bitrate", MpegEncoder_get_vbr_min_bitrate, 0);
-  rb_define_method(cMpegEncoder, "vbr_max_bitrate=", MpegEncoder_set_vbr_max_bitrate, 1);
-  rb_define_method(cMpegEncoder, "vbr_max_bitrate", MpegEncoder_get_vbr_max_bitrate, 0);
-  rb_define_method(cMpegEncoder, "vbr_hard_min=", MpegEncoder_set_vbr_hard_min, 1);
-  rb_define_method(cMpegEncoder, "vbr_hard_min?", MpegEncoder_get_vbr_hard_min, 0);
+  rb_define_method(cMpegEncoder, "vbr_quality=",set_vbr_quality, 1);
+  rb_define_method(cMpegEncoder, "vbr_quality", get_vbr_quality, 0);
+  rb_define_method(cMpegEncoder, "vbr_type=", set_vbr_type, 1);
+  rb_define_method(cMpegEncoder, "vbr_type", get_vbr_type, 0);
+  rb_define_method(cMpegEncoder, "print_config", print_config, 0);
+  rb_define_method(cMpegEncoder, "title=", set_title, 1);
+  rb_define_method(cMpegEncoder, "artist=", set_artist, 1);
+  rb_define_method(cMpegEncoder, "album=", set_album, 1);
+  rb_define_method(cMpegEncoder, "year=", set_year, 1);
+  rb_define_method(cMpegEncoder, "track=", set_track, 1);
+  rb_define_method(cMpegEncoder, "genre=", set_genre, 1);
+  rb_define_method(cMpegEncoder, "bitrate=", set_bitrate, 1);
+  rb_define_method(cMpegEncoder, "bitrate", get_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_min_bitrate=", set_vbr_min_bitrate, 1);
+  rb_define_method(cMpegEncoder, "vbr_min_bitrate", get_vbr_min_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_max_bitrate=", set_vbr_max_bitrate, 1);
+  rb_define_method(cMpegEncoder, "vbr_max_bitrate", get_vbr_max_bitrate, 0);
+  rb_define_method(cMpegEncoder, "vbr_hard_min=", set_vbr_hard_min, 1);
+  rb_define_method(cMpegEncoder, "vbr_hard_min?", get_vbr_hard_min, 0);
 
 
-  rb_define_private_method(cMpegEncoder, "init_params", MpegEncoder_init_params, 0);
-  rb_define_private_method(cMpegEncoder, "num_channels=", MpegEncoder_set_num_channels, 1);
-  rb_define_private_method(cMpegEncoder, "num_channels", MpegEncoder_get_num_channels, 0);
-  rb_define_private_method(cMpegEncoder, "in_samplerate=", MpegEncoder_set_in_samplerate, 1);
-  rb_define_private_method(cMpegEncoder, "num_samples=", MpegEncoder_set_num_samples, 1);
-  rb_define_private_method(cMpegEncoder, "num_samples", MpegEncoder_get_num_samples, 0);
-  rb_define_private_method(cMpegEncoder, "out_samplerate", MpegEncoder_get_out_samplerate, 0);
-  rb_define_private_method(cMpegEncoder, "framesize", MpegEncoder_get_framesize, 0);
-  rb_define_private_method(cMpegEncoder, "encode_buffer", MpegEncoder_encoder_buffer, 2);
-  rb_define_private_method(cMpegEncoder, "flush", MpegEncoder_flush, 0);
-  rb_define_private_method(cMpegEncoder, "write_vbr_tags", MpegEncoder_write_vbr_tags, 1);
-  rb_define_private_method(cMpegEncoder, "force_ms", MpegEncoder_get_force_ms, 0);
-  rb_define_private_method(cMpegEncoder, "mpeg_mode", MpegEncoder_get_mpeg_mode, 0);
-  rb_define_private_method(cMpegEncoder, "mpeg_version", MpegEncoder_get_mpeg_version, 0);
-  rb_define_private_method(cMpegEncoder, "compression_ratio", MpegEncoder_get_compression_ratio, 0);
-  rb_define_private_method(cMpegEncoder, "mpeg_quality", MpegEncoder_get_mpeg_quality, 0);
-  rb_define_private_method(cMpegEncoder, "print_internals", MpegEncoder_print_internals, 0);
-  rb_define_private_method(cMpegEncoder, "write_vbr_tag?", MpegEncoder_write_vbr_tag, 0);
+  rb_define_private_method(cMpegEncoder, "init_params", init_params, 0);
+  rb_define_private_method(cMpegEncoder, "num_channels=", set_num_channels, 1);
+  rb_define_private_method(cMpegEncoder, "num_channels", get_num_channels, 0);
+  rb_define_private_method(cMpegEncoder, "in_samplerate=", set_in_samplerate, 1);
+  rb_define_private_method(cMpegEncoder, "num_samples=", set_num_samples, 1);
+  rb_define_private_method(cMpegEncoder, "num_samples", get_num_samples, 0);
+  rb_define_private_method(cMpegEncoder, "out_samplerate", get_out_samplerate, 0);
+  rb_define_private_method(cMpegEncoder, "framesize", get_framesize, 0);
+  rb_define_private_method(cMpegEncoder, "encode_buffer", encoder_buffer, 2);
+  rb_define_private_method(cMpegEncoder, "flush", flush, 0);
+  rb_define_private_method(cMpegEncoder, "write_vbr_tags", write_vbr_tags, 1);
+  rb_define_private_method(cMpegEncoder, "force_ms", get_force_ms, 0);
+  rb_define_private_method(cMpegEncoder, "mpeg_mode", get_mpeg_mode, 0);
+  rb_define_private_method(cMpegEncoder, "mpeg_version", get_mpeg_version, 0);
+  rb_define_private_method(cMpegEncoder, "compression_ratio", get_compression_ratio, 0);
+  rb_define_private_method(cMpegEncoder, "mpeg_quality", get_mpeg_quality, 0);
+  rb_define_private_method(cMpegEncoder, "print_internals", print_internals, 0);
+  rb_define_private_method(cMpegEncoder, "write_vbr_tag?", write_vbr_tag, 0);
 }
