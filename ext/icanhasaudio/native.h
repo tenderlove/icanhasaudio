@@ -9,7 +9,6 @@
 #include <ogg/ogg.h>
 #include <vorbis/vorbisfile.h>
 
-#include <syncword.h>
 #include <get_audio.h>
 #include <rb_wav.h>
 #include <audio_mpeg_decoder.h>

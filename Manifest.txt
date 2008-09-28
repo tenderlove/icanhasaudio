@@ -21,8 +21,6 @@ ext/icanhasaudio/native.c
 ext/icanhasaudio/native.h
 ext/icanhasaudio/rb_wav.c
 ext/icanhasaudio/rb_wav.h
-ext/icanhasaudio/syncword.c
-ext/icanhasaudio/syncword.h
 lib/icanhasaudio.rb
 lib/icanhasaudio/mpeg.rb
 lib/icanhasaudio/mpeg/decoder.rb
