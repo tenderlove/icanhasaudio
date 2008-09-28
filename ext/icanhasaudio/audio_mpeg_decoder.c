@@ -112,7 +112,7 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
 
 /*
  * call-seq:
- *    decoder.decode(input_io, output_io)
+ *    decode(input_io, output_io)
  *
  * Decode the input IO and write it to the output IO.
  */
@@ -137,6 +137,12 @@ static VALUE decode(VALUE self, VALUE file, VALUE outf) {
   return Qnil;
 }
 
+/*
+ * call-seq:
+ *    num_samples=(number)
+ *
+ * Set the number of samples
+ */
 static VALUE set_num_samples(VALUE self, VALUE sample_count)
 {
   lame_global_flags * gfp;
@@ -145,6 +151,12 @@ static VALUE set_num_samples(VALUE self, VALUE sample_count)
   return sample_count;
 }
 
+/*
+ * call-seq:
+ *    in_samplerate
+ *
+ * Get the input samplerate
+ */
 static VALUE get_in_samplerate(VALUE self)
 {
   lame_global_flags * gfp;
