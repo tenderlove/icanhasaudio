@@ -8,12 +8,12 @@ examples/encoder.rb
 examples/kexp.rb
 ext/icanhasaudio/audio_mpeg_decoder.c
 ext/icanhasaudio/audio_mpeg_decoder.h
+ext/icanhasaudio/audio_mpeg_decoder_mp3data.c
+ext/icanhasaudio/audio_mpeg_decoder_mp3data.h
 ext/icanhasaudio/audio_mpeg_encoder.c
 ext/icanhasaudio/audio_mpeg_encoder.h
 ext/icanhasaudio/audio_ogg_decoder.c
 ext/icanhasaudio/audio_ogg_decoder.h
-ext/icanhasaudio/decoder.c
-ext/icanhasaudio/decoder.h
 ext/icanhasaudio/extconf.rb
 ext/icanhasaudio/get_audio.c
 ext/icanhasaudio/get_audio.h
@@ -28,5 +28,8 @@ lib/icanhasaudio/mpeg.rb
 lib/icanhasaudio/mpeg/decoder.rb
 lib/icanhasaudio/mpeg/encoder.rb
 lib/icanhasaudio/ogg.rb
+test/assets/icha.mp3
 test/assets/testcase.wav
+test/helper.rb
+test/mpeg/test_decoder.rb
 test/test_mpeg_encoder.rb
