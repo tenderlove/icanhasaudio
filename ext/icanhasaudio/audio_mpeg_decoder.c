@@ -112,11 +112,11 @@ static int lame_decode_initfile(VALUE file, mp3data_struct * mp3data) {
 
 /*
  * call-seq:
- *    decode(input_io, output_io)
+ *    native_decode(input_io, output_io)
  *
  * Decode the input IO and write it to the output IO.
  */
-static VALUE decode(VALUE self, VALUE file, VALUE outf) {
+static VALUE native_decode(VALUE self, VALUE file, VALUE outf) {
   mp3data_struct mp3data;
   lame_global_flags * gfp;
 
@@ -177,7 +177,7 @@ void init_audio_mpeg_decoder() {
   );
 
   rb_define_alloc_func(rb_cDecoder, reader_allocate);
-  rb_define_method(rb_cDecoder, "decode", decode, 2);
   rb_define_method(rb_cDecoder, "num_samples=", set_num_samples, 1);
   rb_define_method(rb_cDecoder, "in_samplerate", get_in_samplerate, 0);
+  rb_define_private_method(rb_cDecoder, "native_decode", native_decode, 2);
 }

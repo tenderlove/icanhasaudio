@@ -1,3 +1,8 @@
+=== Unreleased
+
+* Bugfix
+  * Determining bitrate by filesize if not determined yet.
+
 === 0.1.1
 
 * 1 Bugfix

@@ -25,6 +25,7 @@ ext/icanhasaudio/syncword.c
 ext/icanhasaudio/syncword.h
 lib/icanhasaudio.rb
 lib/icanhasaudio/mpeg.rb
+lib/icanhasaudio/mpeg/decoder.rb
 lib/icanhasaudio/mpeg/encoder.rb
 lib/icanhasaudio/ogg.rb
 test/assets/testcase.wav
