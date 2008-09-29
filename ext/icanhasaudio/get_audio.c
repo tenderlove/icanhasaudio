@@ -1,7 +1,5 @@
 #include <native.h>
 
-#define MAX_U_32_NUM 0xFFFFFFFF
-
 static int
 get_audio_common(VALUE self, VALUE musicin,
 		  int buffer[2][1152], short buffer16[2][1152],

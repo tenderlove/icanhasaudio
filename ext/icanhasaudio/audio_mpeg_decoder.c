@@ -92,10 +92,6 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
   Data_Get_Struct(rb_mp3data, mp3data_struct, mp3data);
 
   raw = rb_iv_get(self, "@raw");
-  if(raw == Qnil) {
-    raw = Qfalse;
-    rb_iv_set(self, "@raw", Qfalse);
-  }
 
   Data_Get_Struct(self, lame_global_flags, gfp);
   tmp_num_channels = lame_get_num_channels( gfp );
@@ -103,17 +99,7 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
 
   skip = lame_get_encoder_delay(gfp)+528+1;
 
-  if(!raw) {
-    rb_iv_set(self, "@bits", INT2NUM(16));
-    prelim_header(  self,
-                    headbuf,
-                    0x7FFFFFFF,
-                    0,
-                    tmp_num_channels,
-                    lame_get_in_samplerate( gfp )
-                    );
-    rb_funcall(outf, rb_intern("write"), 1, rb_str_new(headbuf, 44));
-  }
+  rb_iv_set(self, "@bits", INT2NUM(16));
 
   wavsize = -skip;
   if(lame_get_num_samples(gfp) == MAX_U_32_NUM) {
@@ -163,11 +149,21 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
       wavsize *= i;
   }
 
-  if(!raw && rb_funcall(self, rb_intern("attempt_rewind"), 1, outf)) {
-    rewrite_header(headbuf, (int)wavsize);
-    rb_funcall(outf, rb_intern("write"), 1, rb_str_new(headbuf, 44));
-  }
+  rb_iv_set(self, "@wavsize", INT2NUM(wavsize));
   return Qnil;
+}
+
+/*
+ * call-seq:
+ *    num_channels
+ *
+ * Get the number of channels
+ */
+static VALUE get_num_channels(VALUE self)
+{
+  lame_global_flags * gfp;
+  Data_Get_Struct(self, lame_global_flags, gfp);
+  return INT2NUM(lame_get_num_channels(gfp));
 }
 
 /*
@@ -214,4 +210,5 @@ void init_audio_mpeg_decoder() {
   rb_define_method(rb_cDecoder, "in_samplerate", get_in_samplerate, 0);
   rb_define_private_method(rb_cDecoder, "native_decode", native_decode, 2);
   rb_define_private_method(rb_cDecoder, "decode_headers_for", decode_headers_for, 1);
+  rb_define_private_method(rb_cDecoder, "num_channels", get_num_channels, 0);
 }

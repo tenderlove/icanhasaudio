@@ -1,0 +1,1 @@
+require 'icanhasaudio/wav/file'

@@ -6,14 +6,8 @@ module Audio
       attr_reader :mp3data
 
       def initialize
-        @stereo     = nil
-        @samplerate = nil
-        @bitrate    = nil
-        @mode       = nil
-        @mode_ext   = nil
-        @framesize  = nil
         @bits       = 16
-        @raw        = nil
+        @raw        = false
         @mp3data    = MP3Data.new
         yield self if block_given?
       end
@@ -26,7 +20,12 @@ module Audio
           decode_headers_for(input.read(100))
         end
         mp3data.nsamp = MP3Data::MAX_U_32_NUM unless mp3data.total_frames > 0
-        native_decode(input, output)
+        wav = WAV::File.new(output)
+        wav.write_header(0x7FFFFFFF, 0, num_channels, in_samplerate) if !@raw
+        native_decode(input, wav)
+        if !@raw && attempt_rewind(wav)
+          wav.write_header(@wavsize + 44, 0, num_channels, in_samplerate)
+        end
       end
 
       private
