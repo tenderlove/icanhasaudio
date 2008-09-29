@@ -68,6 +68,8 @@ static VALUE decode_headers_for(VALUE self, VALUE rb_buffer)
 
   if(ret == -1)
     rb_raise(rb_eRuntimeError, "Decode headers failed.\n");
+
+  return rb_mp3data;
 }
 
 /*
@@ -84,7 +86,6 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
   int     i;
   int tmp_num_channels;
   int skip;
-  char headbuf[44];
   VALUE raw;
   mp3data_struct * mp3data;
 
@@ -103,7 +104,7 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
 
   wavsize = -skip;
   if(lame_get_num_samples(gfp) == MAX_U_32_NUM) {
-    VALUE samples = rb_funcall(self, rb_intern("determine_samples_for"), 1, infile);
+    rb_funcall(self, rb_intern("determine_samples_for"), 1, infile);
   }
   mp3data->totalframes = mp3data->nsamp / mp3data->framesize;
 
@@ -112,7 +113,6 @@ static VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
   do {
     char BitBuffer16[1152 * 4];
     int bit_16_i = 0;
-    int total = 0;
     iread = get_audio16(self, infile, Buffer, mp3data);
     mp3data->framenum += iread / mp3data->framesize;
     wavsize += iread;

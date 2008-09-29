@@ -26,6 +26,8 @@ lib/icanhasaudio/mpeg.rb
 lib/icanhasaudio/mpeg/decoder.rb
 lib/icanhasaudio/mpeg/encoder.rb
 lib/icanhasaudio/ogg.rb
+lib/icanhasaudio/wav.rb
+lib/icanhasaudio/wav/file.rb
 test/assets/icha.mp3
 test/assets/testcase.wav
 test/helper.rb

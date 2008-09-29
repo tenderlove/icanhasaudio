@@ -1,7 +1,8 @@
-=== Unreleased
+=== 0.1.2
 
 * Bugfix
   * Determining bitrate by filesize if not determined yet.
+  * Moving lots of C code to Ruby!
 
 === 0.1.1
 
