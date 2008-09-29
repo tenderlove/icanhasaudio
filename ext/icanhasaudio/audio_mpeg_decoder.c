@@ -44,6 +44,12 @@ static VALUE method_lame_version(VALUE klass) {
   return rb_str_new(version, strlen(version));
 }
 
+/*
+ * call-seq:
+ *    decode_headers_for(buffer)
+ *
+ * Decode the mp3 headers for +buffer+.
+ */
 static VALUE decode_headers_for(VALUE self, VALUE rb_buffer)
 {
   int enc_delay;

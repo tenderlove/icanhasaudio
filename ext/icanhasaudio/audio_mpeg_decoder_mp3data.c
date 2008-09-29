@@ -1,5 +1,11 @@
 #include <audio_mpeg_decoder_mp3data.h>
 
+/*
+ * call-seq:
+ *    header_parsed?
+ *
+ * Has the mp3 header been parsed yet?
+ */
 static VALUE header_parsed_eh(VALUE self)
 {
   mp3data_struct * mp3data;
@@ -9,6 +15,12 @@ static VALUE header_parsed_eh(VALUE self)
   return Qfalse;
 }
 
+/*
+ * call-seq:
+ *    bitrate
+ *
+ * Get the bitrate
+ */
 static VALUE bitrate(VALUE self)
 {
   mp3data_struct * mp3data;
@@ -16,6 +28,12 @@ static VALUE bitrate(VALUE self)
   return INT2NUM(mp3data->bitrate);
 }
 
+/*
+ * call-seq:
+ *    total_frames
+ *
+ * Get the total frames for this mp3
+ */
 static VALUE total_frames(VALUE self)
 {
   mp3data_struct * mp3data;
@@ -23,6 +41,12 @@ static VALUE total_frames(VALUE self)
   return INT2NUM(mp3data->totalframes);
 }
 
+/*
+ * call-seq:
+ *    nsamp
+ *
+ * Get the number of samples
+ */
 static VALUE get_nsamp(VALUE self)
 {
   mp3data_struct * mp3data;
@@ -30,6 +54,12 @@ static VALUE get_nsamp(VALUE self)
   return LONG2NUM(mp3data->nsamp);
 }
 
+/*
+ * call-seq:
+ *    nsamp=(num)
+ *
+ * Set the number of samples to +num+
+ */
 static VALUE set_nsamp(VALUE self, VALUE num)
 {
   mp3data_struct * mp3data;

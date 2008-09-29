@@ -4,7 +4,9 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "lib")
 
 kind = Config::CONFIG["DLEXT"]
 
-Hoe.new('icanhasaudio', '0.1.1') do |p|
+require 'icanhasaudio/version'
+
+Hoe.new('icanhasaudio', Audio::MPEG::Decoder::VERSION) do |p|
   p.rubyforge_name  = 'seattlerb'
   p.author          = 'Aaron Patterson'
   p.email           = 'aaronp@rubyforge.org'
