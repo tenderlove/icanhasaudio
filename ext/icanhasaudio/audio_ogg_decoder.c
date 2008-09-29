@@ -43,11 +43,11 @@ static long rb_ogg_tell(void *datasource) {
 
 /*
  * call-seq:
- *    decode(input_io, output_io)
+ *    native_decode(input_io, output_io)
  *
  * Decode the input IO and write it to the output IO.
  */
-VALUE decode(VALUE self, VALUE infile, VALUE outf) {
+VALUE native_decode(VALUE self, VALUE infile, VALUE outf) {
   OggVorbis_File vf;
   ov_callbacks callbacks;
   int bs = 0;
@@ -144,5 +144,5 @@ void init_audio_ogg_decoder()
   VALUE rb_mOgg   = rb_define_module_under(rb_mAudio, "OGG");
   VALUE klass     = rb_define_class_under(rb_mOgg, "Decoder", rb_cObject);
 
-  rb_define_method(klass, "decode", decode, 2);
+  rb_define_private_method(klass, "native_decode", native_decode, 2);
 }

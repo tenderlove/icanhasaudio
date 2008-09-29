@@ -1,5 +1,7 @@
 = Audio::MPEG
 
+  http://icanhasaudio.com/
+  http://github.com/tenderlove/icanhasaudio/tree/master
   http://seattlerb.rubyforge.org/
 
 == DESCRIPTION.  LULZ
