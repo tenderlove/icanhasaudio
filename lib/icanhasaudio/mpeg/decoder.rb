@@ -35,7 +35,6 @@ module Audio
       def skip_id3_header input
         header = input.read(4)
         if header == ID3
-          puts "asdfadsf"
           id3_len = input.read(6).unpack('C*')[2..-1].map { |chr|
             chr & 127
           }.inject(0) { |total,chr|
@@ -47,7 +46,7 @@ module Audio
         raise "Found AiD header" if header == AID
 
         while !syncword_mp123?(header)
-          header = header.slice(1..-1) + input.getc
+          header = header.slice(1..-1) + input.getc.chr
         end
         header
       end
@@ -84,6 +83,7 @@ module Audio
       end
 
       def determine_samples_for infile
+        return unless infile.respond_to?(:path)
         length = File.stat(infile.path).size
         total_seconds = length * 8.0 / (1000.0 * mp3data.bitrate)
         self.num_samples = (total_seconds * in_samplerate).to_i
