@@ -557,7 +557,7 @@ static VALUE write_vbr_tags(VALUE self, VALUE outfile) {
   GetOpenFile(outfile, fp);
 
   Data_Get_Struct(self, lame_global_flags, gfp);
-  lame_mp3_tags_fid(gfp, fp->f);
+  lame_mp3_tags_fid(gfp, STDIO(fp));
   return Qnil;
 }
 
