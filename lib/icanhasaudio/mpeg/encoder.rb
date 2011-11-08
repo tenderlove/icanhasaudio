@@ -15,7 +15,7 @@ module Audio
       IFF_ID_NONE = 0x4e4f4e45 # "NONE" AIFF-C data format
       IFF_ID_2CBE = 0x74776f73 # "twos" AIFF-C data format
       IFF_ID_2CLE = 0x736f7774 # "sowt" AIFF-C data format
-      
+
 
       VBR_OFF     = 0
       VBR_NORMAL  = 2
@@ -38,8 +38,15 @@ module Audio
       def encode(infile, outfile)
         raise "Out file must be a FILE.  :-(" unless outfile.is_a?(File)
 
-        num_samples = 0xFFFFFFFF
         parse_header(infile)
+
+        encode_io(infile, outfile)
+
+        write_vbr_tags(outfile) if write_vbr_tag?
+      end
+
+      def encode_io(in_io, out_io)
+        num_samples = 0xFFFFFFFF
         init_params
 
         logger.debug(encoding_info) if logger
@@ -54,7 +61,7 @@ module Audio
              when 24
                32 - 24
              end
-        while !infile.eof?
+        while !in_io.eof?
           tmp_num_samples = num_samples()
           samples_to_read = framesize()
           remaining = tmp_num_samples - [tmp_num_samples, num_samples_read].min
@@ -64,17 +71,16 @@ module Audio
 
           read_size = num_channels * samples_to_read * (pcmbitwidth / 8)
 
-          samples = infile.read(read_size)
+          samples = in_io.read(read_size)
           samples_read = samples.length / num_channels
 
           buffers = [[], []]
           samples.unpack('v*').each_with_index do |b,i|
             (buffers[(i % 2)]) << (b << sw)
           end
-          outfile.write(encode_buffer(buffers[0], buffers[1]))
+          out_io.write(encode_buffer(buffers[0], buffers[1]))
         end
-        outfile.write(flush())
-        write_vbr_tags(outfile) if write_vbr_tag?
+        out_io.write(flush())
       end
 
       private
@@ -182,7 +188,7 @@ module Audio
             raise "Sound data is not PCM" unless sample_type == IFF_ID_SSND
             raise "Sound data is not 16 bits" unless sample_size == 16
             unless num_channels == 1 || num_channels == 2
-              raise "Sound data is not mono or stereo" 
+              raise "Sound data is not mono or stereo"
             end
             raise "Block size is not 0 bytes" unless block_size == 0
           end
@@ -221,7 +227,7 @@ module Audio
               raise "Corrupt wave" if sub_size < 16
 
               ( format_tag,
-                channels, 
+                channels,
                 samples_per_sec,
                 avg_bytes_per_sec,
                 block_align, bits_per_sample) = *(file.read(16).unpack('vvVVvv'))
