@@ -35,19 +35,28 @@ module Audio
         self.vbr_type    = VBR_NORMAL
       end
 
+      def init
+        init_params
+      end
+
       def encode(infile, outfile)
         raise "Out file must be a FILE.  :-(" unless outfile.is_a?(File)
 
         parse_header(infile)
 
-        encode_io(infile, outfile)
+        init
+        encode_io(infile) do |data|
+          outfile.write(data)
+        end
+        flush_io do |data|
+          outfile.write(data)
+        end
 
         write_vbr_tags(outfile) if write_vbr_tag?
       end
 
-      def encode_io(in_io, out_io)
+      def encode_io(in_io)
         num_samples = 0xFFFFFFFF
-        init_params
 
         logger.debug(encoding_info) if logger
 
@@ -78,9 +87,16 @@ module Audio
           samples.unpack('v*').each_with_index do |b,i|
             (buffers[(i % 2)]) << (b << sw)
           end
-          out_io.write(encode_buffer(buffers[0], buffers[1]))
+
+          data = encode_buffer(buffers[0], buffers[1])
+
+          yield data
         end
-        out_io.write(flush())
+      end
+
+      def flush_io
+        data = flush()
+        yield data
       end
 
       private
