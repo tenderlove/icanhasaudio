@@ -41,7 +41,7 @@ static VALUE set_vbr_hard_min(VALUE self, VALUE boolean)
  * call-seq:
  *    encoder.vbr_hard_min?
  *
- *  Get the hard minimum flag. 
+ *  Get the hard minimum flag.
  */
 static VALUE get_vbr_hard_min(VALUE self)
 {
@@ -534,7 +534,7 @@ static VALUE flush(VALUE self) {
   lame_global_flags * gfp;
 
   Data_Get_Struct(self, lame_global_flags, gfp);
-  imp3 = lame_encode_flush(gfp, mp3buffer, sizeof(mp3buffer));
+  imp3 = lame_encode_flush_nogap(gfp, mp3buffer, sizeof(mp3buffer));
   if(imp3 < 0) {
     if(imp3 == -1)
       rb_raise(rb_eRuntimeError, "Mp3 buffer is not big enough.\n");
