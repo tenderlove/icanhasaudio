@@ -4,9 +4,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "lib")
 
 kind = Config::CONFIG["DLEXT"]
 
-require 'icanhasaudio/version'
-
-Hoe.new('icanhasaudio', Audio::MPEG::Decoder::VERSION) do |p|
+Hoe.spec 'icanhasaudio' do |p|
   p.rubyforge_name  = 'seattlerb'
   p.author          = 'Aaron Patterson'
   p.email           = 'aaronp@rubyforge.org'
@@ -33,4 +31,8 @@ end
 
 file "ext/icanhasaudio/native.#{kind}" => FileList["ext/icanhasaudio/Makefile", "ext/icanhasaudio/*.{c,h}"] do
   Dir.chdir("ext/icanhasaudio") { sh "make" }
+end
+
+file "ext/icanhasaudio/native.#{kind}" => FileList["ext/icanhasaudio/Makefile", "ext/icanhasaudio/*.{c,h}"] do
+  Dir.chdir("ext/icanhasaudio") { sh "make install" }
 end

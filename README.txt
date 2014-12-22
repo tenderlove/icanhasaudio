@@ -41,6 +41,12 @@ Currently only decodes MP3/OGG data.  Also encodes WAV/AIFF to mp3. Plus many
 other problems....  YMMV. LOL.
 Not laugh plz!
 
+== GEMSPEC
+
+Creat'n ze gemspec:
+
+  rake debug_gem > icanhasaudio.gemspec
+
 == DEPENDENSEEZ
 
 Make sure lame is installed on ur 'puter.  Also ogg and vorbisfile!

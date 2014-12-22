@@ -2,7 +2,14 @@
 #define ICANHASAUDIO_H
 
 #include <ruby.h>
-#include <rubyio.h>
+#ifdef HAVE_RUBY_IO_H
+  #include <ruby/io.h> // Ruby 1.9
+  #define OpenFile rb_io_t
+  #define STDIO(fp) ((fp)->stdio_file)
+#else
+  #include <rubyio.h>
+  #define STDIO(fp) ((fp)->f)
+#endif
 #include <lame/lame.h>
 #include <dlfcn.h>
 #include <assert.h>
