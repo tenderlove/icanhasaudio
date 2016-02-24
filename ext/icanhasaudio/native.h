@@ -23,6 +23,6 @@
 #include <audio_mpeg_encoder.h>
 #include <audio_ogg_decoder.h>
 
-void Init_native();
+void Init_icanhasaudio();
 
 #endif

@@ -1,6 +1,6 @@
 #include <native.h>
 
-void Init_native()
+void Init_icanhasaudio()
 {
   init_audio_mpeg_decoder();
   init_audio_mpeg_decoder_mp3data();
